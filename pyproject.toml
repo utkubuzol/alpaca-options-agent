@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alpaca-options-agent"
+version = "0.1.0"
+description = "Autonomous options-selling agent for Alpaca's paper trading environment."
+requires-python = ">=3.10"
+
+[project.scripts]
+agent = "alpaca_options_agent.agent.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["alpaca_options_agent*"]

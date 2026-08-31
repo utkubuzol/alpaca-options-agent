@@ -1,0 +1,20 @@
+# alpaca-options-agent cron schedule
+# Install:   crontab scripts/crontab.txt      (replaces your crontab)
+# Or append: (crontab -l 2>/dev/null; cat scripts/crontab.txt) | crontab -
+# Inspect:   crontab -l
+# Remove:    crontab -l | grep -v alpaca-options-agent | crontab -
+#
+# Times are your box's LOCAL time. Window 6-14 (PDT) covers the ET cash
+# session 09:30-16:00; run_paper_agent.sh self-gates on `alpaca clock`, so
+# an over-wide window just produces a few cheap "market closed" skips.
+# macOS note: /usr/sbin/cron needs Full Disk Access (System Settings ->
+# Privacy & Security -> Full Disk Access) to write under ~/Downloads.
+
+# cron runs with a minimal PATH; without this, `command -v alpaca` in
+# run_paper_agent.sh fails and the market-closed self-gate is silently
+# skipped. SHELL pins bash (default is /bin/sh).
+PATH=/opt/homebrew/bin:/usr/bin:/bin
+SHELL=/bin/bash
+
+*/15 6-14 * * 1-5 /Users/utku/Downloads/alpaca-options-agent/scripts/run_paper_agent.sh trade >> /Users/utku/Downloads/alpaca-options-agent/logs/cron.log 2>&1
+10 13 * * 1-5 /Users/utku/Downloads/alpaca-options-agent/scripts/run_paper_agent.sh report >> /Users/utku/Downloads/alpaca-options-agent/logs/cron.log 2>&1
