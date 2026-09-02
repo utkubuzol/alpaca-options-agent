@@ -12,7 +12,9 @@ const inter = Inter({
 
 // PLACEHOLDER DATA — every number the page shows lives here so it can be swapped
 // for real journal output from `logs/agent_journal.jsonl` without touching JSX.
-export const DATA: KestrelData = {
+// (Not `export`ed: Next.js page files may only export a default + reserved
+// fields, so this stays a module-local const at the top of the file.)
+const DATA: KestrelData = {
   // ~40 daily IV-rank observations, 0–1. Most days sit below the entry
   // threshold (the agent sleeps); a handful of rich-vol days poke above it.
   ivRank: [
