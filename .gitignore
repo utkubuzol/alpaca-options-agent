@@ -5,5 +5,19 @@ __pycache__/
 logs/*.jsonl
 logs/*.json
 logs/*.md
+logs/*/
 !logs/.gitkeep
 *.egg-info/
+
+# SaaS layer
+web/backend/.env
+web/frontend/.env.local
+web/frontend/node_modules/
+web/frontend/.next/
+web/frontend/next-env.d.ts
+.pytest_cache/
+
+# runtime logs written by cycle.py under web/backend/
+web/backend/logs/
+web/frontend/.vercel
+.fly/

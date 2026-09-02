@@ -1,0 +1,36 @@
+# Local full stack. Supabase itself is the hosted cloud project
+# (alpaca-options-saas, ref vcfveqjvsuhgfgtkpkhw) — see web/README.md.
+#
+#   cp web/backend/.env.example web/backend/.env   # fill in secrets
+#   docker compose up --build
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: web/backend/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - web/backend/.env
+
+  worker:
+    build:
+      context: .
+      dockerfile: web/backend/Dockerfile.worker
+    env_file:
+      - web/backend/.env
+    depends_on:
+      - api
+
+  web:
+    build:
+      context: web/frontend
+      args:
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api

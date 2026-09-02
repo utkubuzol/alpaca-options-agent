@@ -8,6 +8,16 @@ whether that's alpha or just a backtest that doesn't pay for what it trades?**
 
 Built for the *Alpaca AI Trading Agents Hackathon* — Options Alpha Agents track.
 
+## SaaS dashboard (`web/`)
+
+A multi-tenant web layer wraps this package: FastAPI + Next.js + Supabase.
+Users sign up, store their own Alpaca **paper** keys, build strategies from a
+dashboard (no `.env` editing), watch trades / PnL / equity curve live, and get
+every fill pushed to **Telegram** (WhatsApp wired but stubbed). It reuses the
+strategy / risk / execution stack unchanged via
+`AgentConfig.from_strategy(strategy_row, creds)` + `run_cycle(journal=DBJournal)`,
+and an APScheduler worker replaces cron. See **[`web/README.md`](web/README.md)**.
+
 ## What it does
 
 Every cycle, for each underlying in a configured universe, the agent:

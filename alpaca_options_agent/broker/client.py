@@ -104,6 +104,18 @@ class AlpacaBroker:
         orders = self.trading.get_orders(req)
         return [{"id": str(o.id), "symbol": o.symbol, "status": str(o.status)} for o in orders]
 
+    def get_clock(self) -> Dict:
+        """Market clock — used by the SaaS worker to gate cycles to regular
+        trading hours instead of shelling out to `alpaca clock` under cron
+        (see scripts/run_paper_agent.sh for the CLI equivalent)."""
+        clock = self.trading.get_clock()
+        return {
+            "timestamp": clock.timestamp.isoformat() if clock.timestamp else None,
+            "is_open": bool(clock.is_open),
+            "next_open": clock.next_open.isoformat() if clock.next_open else None,
+            "next_close": clock.next_close.isoformat() if clock.next_close else None,
+        }
+
     # ------------------------------------------------------------------ #
     # Market data
     # ------------------------------------------------------------------ #
