@@ -6,6 +6,7 @@ import { Nav } from "./Nav";
 import { Hero } from "./Hero";
 import { TheWait } from "./TheWait";
 import { TheStrike } from "./TheStrike";
+import { Gates } from "./Gates";
 import type { KestrelData } from "./types";
 
 export function KestrelLanding({
@@ -31,6 +32,7 @@ export function KestrelLanding({
         <Hero />
         <TheWait data={data} />
         <TheStrike data={data} />
+        <Gates data={data} />
       </main>
     </div>
   );
