@@ -17,6 +17,9 @@ _s = get_settings()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_s.cors_origins,
+    # Any Vercel deployment of the frontend (production + preview URLs) without
+    # having to pin each one in FRONTEND_ORIGINS.
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
