@@ -1,34 +1,27 @@
-# Fly.io — API + worker in ONE app, two processes off ONE image.
-#   fly launch --no-deploy --copy-config --name <your-app>
-#   ./web/deploy-fly.sh          # pushes secrets from web/backend/.env, then deploys
+# fly.toml app configuration file generated for alpaca-options-saas-utku on 2026-09-01T23:12:46-07:00
 #
-# `web`    -> uvicorn (HTTP, public)
-# `worker` -> APScheduler loop (no service, always on)
-app = "alpaca-options-saas"
-primary_region = "sjc"          # us-west, matches the Supabase project region
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'alpaca-options-saas-utku'
+primary_region = 'sjc'
 
 [build]
-  dockerfile = "web/backend/Dockerfile"
-  # build context is the repo root (where this fly.toml lives)
+  dockerfile = 'web/backend/Dockerfile'
 
 [processes]
-  web = "uvicorn app.main:app --host 0.0.0.0 --port 8000"
-  worker = "python worker.py"
-
-# Note: per-user iv_history.jsonl / fallback journal write to ./logs and are
-# ephemeral (reset on each deploy). The DB (Supabase) is the durable store;
-# iv-rank proxy rebuilds on its own. Add a Fly volume + AGENT_LOG_ROOT only if
-# you want that history to persist.
+  web = 'uvicorn app.main:app --host 0.0.0.0 --port 8000'
+  worker = 'python worker.py'
 
 [http_service]
   internal_port = 8000
   force_https = true
-  auto_stop_machines = "off"     # API must not sleep
+  auto_stop_machines = 'off'
   auto_start_machines = true
   min_machines_running = 1
-  processes = ["web"]
+  processes = ['web']
 
 [[vm]]
-  size = "shared-cpu-1x"
-  memory = "512mb"               # alpaca-py + numpy/pandas/scipy need headroom
-  processes = ["web", "worker"]
+  size = 'shared-cpu-1x'
+  memory = '512mb'
+  processes = ['web', 'worker']

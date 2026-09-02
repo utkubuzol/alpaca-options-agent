@@ -15,7 +15,9 @@ command -v fly >/dev/null || { echo "install flyctl: https://fly.io/docs/flyctl/
 KEYS="SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY SUPABASE_JWT_SECRET APP_SECRET_KEY TELEGRAM_BOT_TOKEN FRONTEND_ORIGINS"
 
 args=()
-while IFS='=' read -r k v; do
+while IFS= read -r line; do
+  k="${line%%=*}"
+  v="${line#*=}"                     # keep the rest verbatim (Fernet keys end in '=')
   case " $KEYS " in *" $k "*) ;; *) continue ;; esac
   [ -n "$v" ] || continue
   args+=("$k=$v")
