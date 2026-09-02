@@ -26,6 +26,44 @@ export function useFinePointer(): boolean {
   return fine;
 }
 
+// "Has a mouse" — true if the device can hover with a fine pointer, OR as soon
+// as a genuine non-touch pointer moves. This is more robust than a bare
+// `(pointer: fine)` check: some real desktops (VNC / remote sessions / certain
+// Linux setups) report a coarse primary pointer even with a mouse attached, and
+// we still want the cursor-driven effects there. Touchscreens never fire a
+// non-touch pointermove, so the reticle and wire physics stay off for them.
+export function useHasMouse(): boolean {
+  const [has, setHas] = useState(false);
+  useEffect(() => {
+    if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      setHas(true);
+      return;
+    }
+    let done = false;
+    const enable = () => {
+      if (done) return;
+      done = true;
+      setHas(true);
+      window.removeEventListener("pointermove", onPointer as any);
+      window.removeEventListener("mousemove", onMouse);
+    };
+    const onPointer = (e: PointerEvent) => {
+      if (e.pointerType !== "touch") enable();
+    };
+    const onMouse = () => enable();
+    if (typeof window.PointerEvent !== "undefined") {
+      window.addEventListener("pointermove", onPointer as any, { passive: true });
+    } else {
+      window.addEventListener("mousemove", onMouse, { passive: true });
+    }
+    return () => {
+      window.removeEventListener("pointermove", onPointer as any);
+      window.removeEventListener("mousemove", onMouse);
+    };
+  }, []);
+  return has;
+}
+
 export function useIsMobile(breakpoint = 760): boolean {
   const [mobile, setMobile] = useState(false);
   useEffect(() => {

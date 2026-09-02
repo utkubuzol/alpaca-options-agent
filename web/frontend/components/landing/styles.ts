@@ -328,13 +328,13 @@ export const KESTREL_CSS = `
   position: fixed; top: 0; left: 0; z-index: 60;
   pointer-events: none;
   will-change: transform, width, height;
-  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 1px rgba(0,0,0,0.7)) drop-shadow(0 0 4px rgba(38,217,228,0.55));
 }
-.k-reticle__c { position: absolute; width: 12px; height: 12px; border: 0 solid var(--k-accent); }
-.k-reticle__c--tl { top: 0; left: 0; border-top-width: 1px; border-left-width: 1px; }
-.k-reticle__c--tr { top: 0; right: 0; border-top-width: 1px; border-right-width: 1px; }
-.k-reticle__c--bl { bottom: 0; left: 0; border-bottom-width: 1px; border-left-width: 1px; }
-.k-reticle__c--br { bottom: 0; right: 0; border-bottom-width: 1px; border-right-width: 1px; }
+.k-reticle__c { position: absolute; width: 13px; height: 13px; border: 0 solid var(--k-accent); }
+.k-reticle__c--tl { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+.k-reticle__c--tr { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+.k-reticle__c--bl { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.k-reticle__c--br { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
 
 /* ---------- reveal ---------- */
 .k-reveal { opacity: 1; }

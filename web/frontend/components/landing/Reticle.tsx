@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useFinePointer, usePrefersReducedMotion } from "./hooks";
+import { useHasMouse, usePrefersReducedMotion } from "./hooks";
 
 type Box = { x: number; y: number; w: number; h: number };
 
@@ -8,12 +8,12 @@ type Box = { x: number; y: number; w: number; h: number };
 // cursor with lag and snaps to elements marked [data-reticle]. Driven entirely
 // by rAF + refs; React state is never touched per frame.
 export function Reticle() {
-  const fine = useFinePointer();
+  const hasMouse = useHasMouse();
   const reduced = usePrefersReducedMotion();
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!fine || reduced) return;
+    if (!hasMouse || reduced) return;
     const el = ref.current;
     if (!el) return;
 
@@ -85,9 +85,9 @@ export function Reticle() {
       window.clearInterval(refreshTimer);
       window.removeEventListener("mousemove", onMove);
     };
-  }, [fine, reduced]);
+  }, [hasMouse, reduced]);
 
-  if (!fine || reduced) return null;
+  if (!hasMouse || reduced) return null;
   return (
     <div ref={ref} className="k-reticle" style={{ opacity: 0 }} aria-hidden="true">
       <span className="k-reticle__c k-reticle__c--tl" />

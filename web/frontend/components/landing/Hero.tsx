@@ -3,10 +3,10 @@ import { useEffect, useRef } from "react";
 import { HeroMedia } from "./HeroMedia";
 import { Cta } from "./Cta";
 import { GITHUB_URL } from "./styles";
-import { useFinePointer, usePrefersReducedMotion } from "./hooks";
+import { useHasMouse, usePrefersReducedMotion } from "./hooks";
 
 export function Hero() {
-  const fine = useFinePointer();
+  const hasMouse = useHasMouse();
   const reduced = usePrefersReducedMotion();
   const mediaRef = useRef<HTMLDivElement | null>(null);
   const copyRef = useRef<HTMLDivElement | null>(null);
@@ -42,7 +42,7 @@ export function Hero() {
 
   // Cursor light over the hero — soft cyan radial, screen-blended, follows rAF.
   useEffect(() => {
-    if (!fine || reduced) return;
+    if (!hasMouse || reduced) return;
     const hero = heroRef.current;
     const light = lightRef.current;
     if (!hero || !light) return;
@@ -72,7 +72,7 @@ export function Hero() {
       hero.removeEventListener("mouseleave", onLeave);
       cancelAnimationFrame(raf);
     };
-  }, [fine, reduced]);
+  }, [hasMouse, reduced]);
 
   return (
     <section className="k-hero" id="top" ref={heroRef as any} aria-label="Kestrel">

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useFinePointer, usePrefersReducedMotion } from "./hooks";
+import { useHasMouse, usePrefersReducedMotion } from "./hooks";
 
 // Anchor styled as a Kestrel button. Primary variant is magnetic: within a
 // 60px radius it eases up to 6px toward the cursor. Transform only, rAF-driven.
@@ -21,12 +21,12 @@ export function Cta({
   external?: boolean;
   dataReticle?: boolean;
 }) {
-  const fine = useFinePointer();
+  const hasMouse = useHasMouse();
   const reduced = usePrefersReducedMotion();
   const ref = useRef<HTMLAnchorElement | null>(null);
 
   useEffect(() => {
-    if (!magnetic || !fine || reduced) return;
+    if (!magnetic || !hasMouse || reduced) return;
     const el = ref.current;
     if (!el) return;
     const RADIUS = 60;
@@ -75,7 +75,7 @@ export function Cta({
       window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(raf);
     };
-  }, [magnetic, fine, reduced]);
+  }, [magnetic, hasMouse, reduced]);
 
   return (
     <a

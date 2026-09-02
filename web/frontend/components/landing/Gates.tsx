@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { Reveal } from "./Reveal";
-import { useFinePointer, usePrefersReducedMotion } from "./hooks";
+import { useHasMouse, usePrefersReducedMotion } from "./hooks";
 import type { KestrelData } from "./types";
 
 const GATES = [
@@ -29,7 +29,7 @@ function baselineY(j: number) {
 function Wires() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  const fine = useFinePointer();
+  const hasMouse = useHasMouse();
   const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
@@ -92,7 +92,7 @@ function Wires() {
       }
     };
 
-    if (reduced || !fine) {
+    if (reduced || !hasMouse) {
       drawStatic();
       const onResize = () => { build(); drawStatic(); };
       window.addEventListener("resize", onResize);
@@ -197,7 +197,7 @@ function Wires() {
       canvas.removeEventListener("mouseleave", onLeave);
       window.removeEventListener("resize", onResize);
     };
-  }, [fine, reduced]);
+  }, [hasMouse, reduced]);
 
   return (
     <div className="k-wires" ref={wrapRef}>
