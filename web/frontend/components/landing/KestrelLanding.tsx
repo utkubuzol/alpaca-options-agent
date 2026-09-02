@@ -5,6 +5,7 @@ import { Reticle } from "./Reticle";
 import { Nav } from "./Nav";
 import { Hero } from "./Hero";
 import { TheWait } from "./TheWait";
+import { TheStrike } from "./TheStrike";
 import type { KestrelData } from "./types";
 
 export function KestrelLanding({
@@ -29,6 +30,7 @@ export function KestrelLanding({
       <main>
         <Hero />
         <TheWait data={data} />
+        <TheStrike data={data} />
       </main>
     </div>
   );
