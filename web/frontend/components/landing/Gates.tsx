@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { Reveal } from "./Reveal";
 import { useHasMouse, usePrefersReducedMotion } from "./hooks";
-import type { KestrelData } from "./types";
+import type { LandingData } from "./types";
 
 const GATES = [
   "Max loss per trade",
@@ -110,7 +110,6 @@ function Wires() {
       const spread = 90;
       for (let j = 0; j < GATES.length; j++) {
         const pts = state[j];
-        // integrate (vertical-only verlet) + restoring pull to baseline
         for (let i = 1; i < N - 1; i++) {
           const p = pts[i];
           const v = (p.y - p.oldY) * damping;
@@ -118,7 +117,6 @@ function Wires() {
           p.y += v;
           p.y += (p.base - p.y) * 0.06;
         }
-        // cursor push
         if (mouse.on) {
           for (let i = 1; i < N - 1; i++) {
             const p = pts[i];
@@ -131,7 +129,6 @@ function Wires() {
             }
           }
         }
-        // distance constraints, pinned ends
         for (let k = 0; k < 3; k++) {
           for (let i = 0; i < N - 1; i++) {
             const a = pts[i];
@@ -214,7 +211,10 @@ function Wires() {
   );
 }
 
-export function Gates({ data }: { data: KestrelData }) {
+export function Gates({ data }: { data: LandingData }) {
+  const rejections = data.rejections ?? [];
+  const hasData = rejections.length > 0;
+
   return (
     <section className="k-section" aria-labelledby="gates-h">
       <Reveal>
@@ -239,31 +239,33 @@ export function Gates({ data }: { data: KestrelData }) {
         <Wires />
       </Reveal>
 
-      <Reveal delay={80} className="k-table-wrap">
-        <div className="k-table-title">Rejections are logged, not silently dropped.</div>
-        <table className="k-table">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Underlying</th>
-              <th className="k-hide-sm">Strategy</th>
-              <th>Gate fired</th>
-              <th className="k-hide-sm">Reason</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.rejections.map((r) => (
-              <tr key={r.ts + r.underlying} data-reticle>
-                <td className="k-mono">{r.ts}</td>
-                <td className="k-mono">{r.underlying}</td>
-                <td className="k-hide-sm">{r.strategy}</td>
-                <td><span className="k-tag">{r.gate}</span></td>
-                <td className="k-hide-sm">{r.reason}</td>
+      {hasData && (
+        <Reveal delay={80} className="k-table-wrap">
+          <div className="k-table-title">Rejections are logged, not silently dropped.</div>
+          <table className="k-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Underlying</th>
+                <th className="k-hide-sm">Strategy</th>
+                <th>Gate fired</th>
+                <th className="k-hide-sm">Reason</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </Reveal>
+            </thead>
+            <tbody>
+              {rejections.map((r) => (
+                <tr key={r.ts + r.underlying} data-reticle>
+                  <td className="k-mono">{r.ts}</td>
+                  <td className="k-mono">{r.underlying}</td>
+                  <td className="k-hide-sm">{r.strategy}</td>
+                  <td><span className="k-tag">{r.gate}</span></td>
+                  <td className="k-hide-sm">{r.reason}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Reveal>
+      )}
     </section>
   );
 }

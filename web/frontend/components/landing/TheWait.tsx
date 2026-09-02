@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "recharts";
 import { Reveal } from "./Reveal";
-import type { KestrelData } from "./types";
+import type { LandingData } from "./types";
 
 const ACCENT = "#26D9E4";
 const DORMANT = "#1C232D";
@@ -28,9 +28,10 @@ function IvTooltip({ active, payload }: any) {
   );
 }
 
-export function TheWait({ data }: { data: KestrelData }) {
-  const rows = data.ivRank.map((v, i) => ({ i: i + 1, v }));
+export function TheWait({ data }: { data: LandingData }) {
+  const rows = data.ivRank ? data.ivRank.map((v, i) => ({ i: i + 1, v })) : [];
   const th = data.ivThreshold;
+  const hasData = rows.length > 0;
 
   return (
     <section className="k-section" id="how-it-works" aria-labelledby="wait-h">
@@ -51,37 +52,31 @@ export function TheWait({ data }: { data: KestrelData }) {
         </p>
       </Reveal>
 
-      <Reveal delay={140} className="k-chart-frame" style={{ marginTop: 40 }} data-reticle>
-        <p className="k-sr">
-          Chart: forty daily implied-volatility-rank readings between 0 and 1.
-          Bars at or above the {th.toFixed(2)} entry threshold are highlighted in
-          cyan; the remaining lower bars are dormant days when the agent stays
-          out of the market.
-        </p>
-        <div className="k-chart" style={{ height: 180 }} aria-hidden="true">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={rows} margin={{ top: 8, right: 4, bottom: 4, left: 4 }} barCategoryGap={2}>
-              <XAxis dataKey="i" hide />
-              <YAxis domain={[0, 1]} hide />
-              <Tooltip cursor={{ fill: "rgba(38,217,228,0.06)" }} content={<IvTooltip />} />
-              <ReferenceLine
-                y={th}
-                stroke={ACCENT}
-                strokeDasharray="4 4"
-                strokeOpacity={0.7}
-              />
-              <Bar dataKey="v" radius={[2, 2, 0, 0]} isAnimationActive={false}>
-                {rows.map((r) => (
-                  <Cell key={r.i} fill={r.v >= th ? ACCENT : DORMANT} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-        <p className="k-caption">
-          Entry threshold at IV rank {th.toFixed(2)}. Below the line, the agent sleeps.
-        </p>
-      </Reveal>
+      {hasData && (
+        <Reveal delay={140} className="k-chart-frame" style={{ marginTop: 40 }} data-reticle>
+          <p className="k-sr">
+            Chart: {rows.length} daily implied-volatility-rank readings between 0
+            and 1. {th != null ? `Bars at or above the ${th.toFixed(2)} entry threshold are highlighted in cyan.` : ""}
+          </p>
+          <div className="k-chart" style={{ height: 180 }} aria-hidden="true">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={rows} margin={{ top: 8, right: 4, bottom: 4, left: 4 }} barCategoryGap={2}>
+                <XAxis dataKey="i" hide />
+                <YAxis domain={[0, 1]} hide />
+                <Tooltip cursor={{ fill: "rgba(38,217,228,0.06)" }} content={<IvTooltip />} />
+                {th != null && (
+                  <ReferenceLine y={th} stroke={ACCENT} strokeDasharray="4 4" strokeOpacity={0.7} />
+                )}
+                <Bar dataKey="v" radius={[2, 2, 0, 0]} isAnimationActive={false}>
+                  {rows.map((r) => (
+                    <Cell key={r.i} fill={th != null && r.v >= th ? ACCENT : DORMANT} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Reveal>
+      )}
     </section>
   );
 }

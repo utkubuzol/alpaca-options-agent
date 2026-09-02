@@ -10,13 +10,13 @@ import { Gates } from "./Gates";
 import { Proof } from "./Proof";
 import { HonestLimits } from "./HonestLimits";
 import { Footer } from "./Footer";
-import type { KestrelData } from "./types";
+import type { LandingData } from "./types";
 
 export function KestrelLanding({
   data,
   fontClassName,
 }: {
-  data: KestrelData;
+  data: LandingData;
   fontClassName: string;
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
