@@ -4,6 +4,7 @@ import { KESTREL_CSS } from "./styles";
 import { Reticle } from "./Reticle";
 import { Nav } from "./Nav";
 import { Hero } from "./Hero";
+import { TheWait } from "./TheWait";
 import type { KestrelData } from "./types";
 
 export function KestrelLanding({
@@ -27,6 +28,7 @@ export function KestrelLanding({
       <Nav />
       <main>
         <Hero />
+        <TheWait data={data} />
       </main>
     </div>
   );
