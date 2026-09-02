@@ -8,6 +8,8 @@ import { TheWait } from "./TheWait";
 import { TheStrike } from "./TheStrike";
 import { Gates } from "./Gates";
 import { Proof } from "./Proof";
+import { HonestLimits } from "./HonestLimits";
+import { Footer } from "./Footer";
 import type { KestrelData } from "./types";
 
 export function KestrelLanding({
@@ -35,7 +37,9 @@ export function KestrelLanding({
         <TheStrike data={data} />
         <Gates data={data} />
         <Proof data={data} />
+        <HonestLimits />
       </main>
+      <Footer />
     </div>
   );
 }
