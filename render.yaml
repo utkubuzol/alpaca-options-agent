@@ -1,0 +1,50 @@
+# Render blueprint — 3 services. `render blueprint launch` or connect the repo.
+# Secrets (sync: false) must be set in the Render dashboard after first deploy.
+services:
+  - type: web
+    name: saas-api
+    runtime: docker
+    dockerfilePath: web/backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: SUPABASE_URL
+        value: https://vcfveqjvsuhgfgtkpkhw.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: APP_SECRET_KEY
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: FRONTEND_ORIGINS
+        value: https://saas-web.onrender.com
+
+  - type: worker
+    name: saas-worker
+    runtime: docker
+    dockerfilePath: web/backend/Dockerfile.worker
+    dockerContext: .
+    envVars:
+      - key: SUPABASE_URL
+        value: https://vcfveqjvsuhgfgtkpkhw.supabase.co
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: APP_SECRET_KEY
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+
+  - type: web
+    name: saas-web
+    runtime: docker
+    dockerfilePath: web/frontend/Dockerfile
+    dockerContext: web/frontend
+    envVars:
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        value: https://vcfveqjvsuhgfgtkpkhw.supabase.co
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        value: sb_publishable_yRGHWe-u1-OOC9TWWS94QQ_4ejnWKgy
+      - key: NEXT_PUBLIC_API_URL
+        value: https://saas-api.onrender.com

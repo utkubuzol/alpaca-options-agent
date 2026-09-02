@@ -1,0 +1,15 @@
+.git
+.venv
+**/__pycache__
+*.pyc
+.pytest_cache
+logs/
+web/backend/logs/
+web/backend/.env
+web/frontend/.env.local
+web/frontend/node_modules
+web/frontend/.next
+web/frontend/.vercel
+graphify-out/
+.fly/
+*.egg-info

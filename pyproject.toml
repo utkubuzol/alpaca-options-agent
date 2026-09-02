@@ -13,3 +13,9 @@ agent = "alpaca_options_agent.agent.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["alpaca_options_agent*"]
+
+[tool.pytest.ini_options]
+# Root suite is the package's own tests. The SaaS backend has its own suite
+# (run it from web/backend/: `cd web/backend && PYTHONPATH=. pytest`).
+testpaths = ["tests"]
+norecursedirs = ["web", ".venv", "logs"]

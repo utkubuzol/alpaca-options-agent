@@ -38,6 +38,16 @@ def premium_journal_stats(journal_path: Path) -> Dict:
         return {"n_fills": 0}
 
     fills = [r["fill"] for r in Journal(journal_path).read_all() if r.get("kind") == "fill"]
+    return premium_stats_from_fills(fills)
+
+
+def premium_stats_from_fills(fills: List[Dict]) -> Dict:
+    """Same aggregation as `premium_journal_stats`, but over an already-loaded
+    list of `fill` dicts — lets the SaaS backend feed rows straight from the
+    `trade_events` table instead of a JSONL file."""
+    if not fills:
+        return {"n_fills": 0}
+
     filled = [f for f in fills if f.get("filled")]
     slips = [f["slippage_bps"] for f in filled if f.get("slippage_bps") is not None]
 

@@ -13,7 +13,26 @@ from __future__ import annotations
 import json
 import time
 from pathlib import Path
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, Protocol, runtime_checkable
+
+
+@runtime_checkable
+class JournalSink(Protocol):
+    """The write surface `runner.run_cycle` depends on. `Journal` (JSONL,
+    below) is the default implementation; the SaaS backend supplies a
+    Postgres-backed one (`web/backend/app/db_journal.DBJournal`) with the
+    same methods so a live cycle can stream events per-user and fire
+    notifications without the runner knowing where the rows go.
+    """
+
+    def scan(self, underlying: str, vol_sig: Dict, trend_sig: Dict, n_candidates: int) -> None: ...
+    def candidate(self, candidate: Dict) -> None: ...
+    def risk_decision(self, candidate_id: str, underlying: str, approved: bool,
+                      sized_contracts: int, reasons: list) -> None: ...
+    def fill(self, fill_result: Dict) -> None: ...
+    def error(self, context: str, message: str) -> None: ...
+    def note(self, message: str, **extra: Any) -> None: ...
+    def read_all(self) -> Iterable[Dict]: ...
 
 
 class Journal:

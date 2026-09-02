@@ -17,12 +17,12 @@ from typing import Dict, List, Optional
 
 from alpaca_options_agent.broker.cli_bridge import AlpacaCli, AlpacaCliUnavailable
 from alpaca_options_agent.broker.client import AlpacaBroker
-from alpaca_options_agent.config import AgentConfig
+from alpaca_options_agent.config import STRATEGY_TYPE_SLUGS, AgentConfig
 from alpaca_options_agent.execution.cost_model import expected_marketable_limit
 from alpaca_options_agent.execution.execution_engine import ExecutionEngine
-from alpaca_options_agent.monitoring.journal import Journal
+from alpaca_options_agent.monitoring.journal import Journal, JournalSink
 from alpaca_options_agent.risk.risk_manager import AccountSnapshot, RiskManager
-from alpaca_options_agent.strategy.premium_selling import StrategyParams, generate_candidates
+from alpaca_options_agent.strategy.premium_selling import generate_candidates
 from alpaca_options_agent.strategy.signals import IVHistoryStore, trend_signal, vol_signal
 from alpaca_options_agent.strategy.types import Leg, LegAction, TradeCandidate
 
@@ -126,18 +126,28 @@ def manage_open_positions(broker: AlpacaBroker, journal: Journal, cfg: AgentConf
     return results
 
 
-def run_cycle(cfg: AgentConfig, dry_run: bool = False) -> List[Dict]:
+def run_cycle(
+    cfg: AgentConfig,
+    dry_run: bool = False,
+    journal: Optional[JournalSink] = None,
+) -> List[Dict]:
     """Runs one full pass. Returns a list of per-underlying result dicts
     (for CLI JSON output). dry_run=True screens and sizes candidates but
     never submits an order — used by `agent scan` / `agent decide`.
+
+    `journal`: where decision events go. Defaults to the append-only JSONL
+    `Journal` under `cfg.log_dir`; the SaaS backend passes a `DBJournal`
+    (same interface) so events stream to Postgres per-user and drive
+    Telegram/WhatsApp notifications.
     """
     cfg.validate_credentials()
-    broker = AlpacaBroker()
-    journal = Journal(cfg.log_dir / "agent_journal.jsonl")
+    broker = AlpacaBroker(api_key=cfg.api_key, secret_key=cfg.secret_key, paper=cfg.paper)
+    if journal is None:
+        journal = Journal(cfg.log_dir / "agent_journal.jsonl")
     risk_mgr = RiskManager(cfg.risk)
     exec_engine = ExecutionEngine(broker, cfg.execution)
     iv_store = IVHistoryStore(cfg.log_dir / "iv_history.jsonl")
-    params = StrategyParams()
+    params = cfg.strategy_params
 
     cli_cross_check(journal)
 
@@ -155,7 +165,9 @@ def run_cycle(cfg: AgentConfig, dry_run: bool = False) -> List[Dict]:
         try:
             spot = broker.get_underlying_price(underlying)
             closes = broker.get_historical_closes(underlying, lookback_days=60)
-            chain = broker.get_option_chain(underlying, min_dte=25, max_dte=45)
+            chain = broker.get_option_chain(
+                underlying, min_dte=cfg.chain_min_dte, max_dte=cfg.chain_max_dte
+            )
 
             if len(closes) < 55 or not chain:
                 row["status"] = "skipped_insufficient_data"
@@ -175,6 +187,12 @@ def run_cycle(cfg: AgentConfig, dry_run: bool = False) -> List[Dict]:
                 max_spread_pct=cfg.risk.max_bid_ask_spread_pct,
                 params=params,
             )
+            if cfg.enabled_strategy_types:
+                candidates = [
+                    c for c in candidates
+                    if STRATEGY_TYPE_SLUGS.get(c.strategy_type.value) in cfg.enabled_strategy_types
+                ]
+
             row["n_candidates"] = len(candidates)
             if not candidates:
                 row["status"] = "no_candidate"
