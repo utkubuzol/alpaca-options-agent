@@ -18,6 +18,10 @@ export function HonestLimits() {
             <li key={i}>{l}</li>
           ))}
         </ul>
+        <p className="k-limits__note">
+          Live figures are on the dashboard; this page is refreshed manually from
+          the agent&rsquo;s journal.
+        </p>
       </Reveal>
     </section>
   );

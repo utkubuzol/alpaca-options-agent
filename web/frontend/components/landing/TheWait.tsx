@@ -10,13 +10,24 @@ import {
   Tooltip,
 } from "recharts";
 import { Reveal } from "./Reveal";
+import { DataCaption, IllustrativeCaption } from "./Caption";
 import type { LandingData } from "./types";
 
 const ACCENT = "#26D9E4";
 const DORMANT = "#1C232D";
 
-function IvTooltip({ active, payload }: any) {
-  if (!active || !payload?.length) return null;
+// Illustrative shape only — a generic "mostly-dormant, occasionally-rich" IV
+// profile with no numeric axes, used when the journal has no IV history to show.
+const ILLUSTRATIVE_IV = [
+  0.32, 0.28, 0.41, 0.37, 0.44, 0.35, 0.29, 0.52, 0.48, 0.55,
+  0.61, 0.58, 0.64, 0.49, 0.4, 0.33, 0.31, 0.45, 0.5, 0.57,
+  0.68, 0.72, 0.63, 0.54, 0.47, 0.39, 0.42, 0.36, 0.3, 0.34,
+  0.51, 0.6, 0.66, 0.71, 0.59, 0.46, 0.38, 0.43, 0.62, 0.56,
+];
+const ILLUSTRATIVE_TH = 0.6;
+
+function IvTooltip({ active, payload, live }: any) {
+  if (!active || !payload?.length || !live) return null;
   const v = payload[0].payload.v as number;
   return (
     <div className="k-tooltip">
@@ -29,9 +40,10 @@ function IvTooltip({ active, payload }: any) {
 }
 
 export function TheWait({ data }: { data: LandingData }) {
-  const rows = data.ivRank ? data.ivRank.map((v, i) => ({ i: i + 1, v })) : [];
-  const th = data.ivThreshold;
-  const hasData = rows.length > 0;
+  const live = !!data.ivRank && data.ivRank.length > 0;
+  const values = live ? data.ivRank! : ILLUSTRATIVE_IV;
+  const th = live ? data.ivThreshold : ILLUSTRATIVE_TH;
+  const rows = values.map((v, i) => ({ i: i + 1, v }));
 
   return (
     <section className="k-section" id="how-it-works" aria-labelledby="wait-h">
@@ -52,31 +64,31 @@ export function TheWait({ data }: { data: LandingData }) {
         </p>
       </Reveal>
 
-      {hasData && (
-        <Reveal delay={140} className="k-chart-frame" style={{ marginTop: 40 }} data-reticle>
-          <p className="k-sr">
-            Chart: {rows.length} daily implied-volatility-rank readings between 0
-            and 1. {th != null ? `Bars at or above the ${th.toFixed(2)} entry threshold are highlighted in cyan.` : ""}
-          </p>
-          <div className="k-chart" style={{ height: 180 }} aria-hidden="true">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={rows} margin={{ top: 8, right: 4, bottom: 4, left: 4 }} barCategoryGap={2}>
-                <XAxis dataKey="i" hide />
-                <YAxis domain={[0, 1]} hide />
-                <Tooltip cursor={{ fill: "rgba(38,217,228,0.06)" }} content={<IvTooltip />} />
-                {th != null && (
-                  <ReferenceLine y={th} stroke={ACCENT} strokeDasharray="4 4" strokeOpacity={0.7} />
-                )}
-                <Bar dataKey="v" radius={[2, 2, 0, 0]} isAnimationActive={false}>
-                  {rows.map((r) => (
-                    <Cell key={r.i} fill={th != null && r.v >= th ? ACCENT : DORMANT} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Reveal>
-      )}
+      <Reveal delay={140} className="k-chart-frame" style={{ marginTop: 40 }} data-reticle>
+        <p className="k-sr">
+          {live
+            ? `Chart: ${rows.length} daily implied-volatility-rank readings between 0 and 1. Bars at or above the entry threshold are highlighted in cyan; the rest are dormant days.`
+            : "Illustrative diagram: a strip of daily implied-volatility-rank bars, most below an entry threshold line (dormant days), a few above it. Shape only — not live figures."}
+        </p>
+        <div className="k-chart" style={{ height: 180 }} aria-hidden="true">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={rows} margin={{ top: 8, right: 4, bottom: 4, left: 4 }} barCategoryGap={2}>
+              <XAxis dataKey="i" hide />
+              <YAxis domain={[0, 1]} hide />
+              {live && <Tooltip cursor={{ fill: "rgba(38,217,228,0.06)" }} content={<IvTooltip live={live} />} />}
+              {th != null && (
+                <ReferenceLine y={th} stroke={ACCENT} strokeDasharray="4 4" strokeOpacity={0.7} />
+              )}
+              <Bar dataKey="v" radius={[2, 2, 0, 0]} isAnimationActive={false}>
+                {rows.map((r) => (
+                  <Cell key={r.i} fill={th != null && r.v >= th ? ACCENT : DORMANT} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        {live ? <DataCaption data={data} /> : <IllustrativeCaption />}
+      </Reveal>
     </section>
   );
 }

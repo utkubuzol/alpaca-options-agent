@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { Reveal } from "./Reveal";
+import { DataCaption, EmptyNote } from "./Caption";
 import { useHasMouse, usePrefersReducedMotion } from "./hooks";
 import type { LandingData } from "./types";
 
@@ -239,31 +240,42 @@ export function Gates({ data }: { data: LandingData }) {
         <Wires />
       </Reveal>
 
-      {hasData && (
-        <Reveal delay={80} className="k-table-wrap">
-          <div className="k-table-title">Rejections are logged, not silently dropped.</div>
-          <table className="k-table">
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Underlying</th>
-                <th className="k-hide-sm">Strategy</th>
-                <th>Gate fired</th>
-                <th className="k-hide-sm">Reason</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rejections.map((r) => (
-                <tr key={r.ts + r.underlying} data-reticle>
-                  <td className="k-mono">{r.ts}</td>
-                  <td className="k-mono">{r.underlying}</td>
-                  <td className="k-hide-sm">{r.strategy}</td>
-                  <td><span className="k-tag">{r.gate}</span></td>
-                  <td className="k-hide-sm">{r.reason}</td>
+      {hasData ? (
+        <Reveal delay={80}>
+          <div className="k-table-wrap">
+            <div className="k-table-title">Rejections are logged, not silently dropped.</div>
+            <table className="k-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Underlying</th>
+                  <th className="k-hide-sm">Strategy</th>
+                  <th>Gate fired</th>
+                  <th className="k-hide-sm">Reason</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rejections.map((r) => (
+                  <tr key={r.ts + r.underlying} data-reticle>
+                    <td className="k-mono">{r.ts}</td>
+                    <td className="k-mono">{r.underlying}</td>
+                    <td className="k-hide-sm">{r.strategy}</td>
+                    <td><span className="k-tag">{r.gate}</span></td>
+                    <td className="k-hide-sm">{r.reason}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <DataCaption data={data} />
+        </Reveal>
+      ) : (
+        <Reveal delay={80}>
+          <EmptyNote>
+            Real gate rejections — timestamp, underlying, strategy, the gate that
+            fired and why — appear here once the agent&rsquo;s journal is connected.
+            The dashboard shows current gate activity.
+          </EmptyNote>
         </Reveal>
       )}
     </section>

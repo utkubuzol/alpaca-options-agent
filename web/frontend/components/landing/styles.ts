@@ -89,6 +89,25 @@ export const KESTREL_CSS = `
   margin-top: 14px;
   letter-spacing: 0.01em;
 }
+/* honesty labels: ~11px, muted, sit under every chart / stat group */
+.k-honesty {
+  font-size: 11px;
+  color: var(--k-axis);
+  letter-spacing: 0.04em;
+  margin-top: 12px;
+}
+/* explanatory placeholder shown where a data-only visual is intentionally
+   hidden because the journal isn't connected — never a fake figure */
+.k-empty {
+  margin-top: 36px;
+  padding: 16px 18px;
+  border: 1px dashed var(--k-border);
+  border-radius: 12px;
+  color: var(--k-muted);
+  font-size: 12.5px;
+  line-height: 1.5;
+  max-width: 66ch;
+}
 
 /* ---------- layout ---------- */
 .k-section {
@@ -310,6 +329,14 @@ export const KESTREL_CSS = `
 .k-limits ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
 .k-limits li { color: var(--k-muted); font-size: 15px; line-height: 1.55; padding-left: 20px; position: relative; max-width: 76ch; }
 .k-limits li::before { content: ""; position: absolute; left: 0; top: 10px; width: 6px; height: 1px; background: var(--k-axis); }
+.k-limits__note {
+  margin: 26px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--k-border);
+  color: var(--k-muted);
+  font-size: 14px;
+  max-width: 76ch;
+}
 
 /* ---------- footer ---------- */
 .k-footer {

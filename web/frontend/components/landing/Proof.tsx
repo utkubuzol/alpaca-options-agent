@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { Reveal } from "./Reveal";
 import { Stat } from "@/components/ui";
+import { DataCaption, EmptyNote } from "./Caption";
 import type { LandingData } from "./types";
 
 const ACCENT = "#26D9E4";
@@ -90,16 +91,31 @@ export function Proof({ data }: { data: LandingData }) {
               </ComposedChart>
             </ResponsiveContainer>
           </div>
+          <DataCaption data={data} />
         </Reveal>
       )}
 
       {s && (
-        <div className="k-stats">
-          <Reveal as="div" data-reticle><Stat label="Fills logged" value={String(s.fills)} /></Reveal>
-          <Reveal as="div" delay={60} data-reticle><Stat label="Avg slippage" value={`${s.avgSlippageBps} bps`} /></Reveal>
-          <Reveal as="div" delay={120} data-reticle><Stat label="Worst slippage" value={`${s.worstSlippageBps} bps`} /></Reveal>
-          <Reveal as="div" delay={180} data-reticle><Stat label="Candidates rejected" value={String(s.rejected)} /></Reveal>
-        </div>
+        <>
+          <div className="k-stats">
+            <Reveal as="div" data-reticle><Stat label="Fills logged" value={String(s.fills)} /></Reveal>
+            <Reveal as="div" delay={60} data-reticle><Stat label="Avg slippage" value={`${s.avgSlippageBps} bps`} /></Reveal>
+            <Reveal as="div" delay={120} data-reticle><Stat label="Worst slippage" value={`${s.worstSlippageBps} bps`} /></Reveal>
+            <Reveal as="div" delay={180} data-reticle><Stat label="Candidates rejected" value={String(s.rejected)} /></Reveal>
+          </div>
+          <DataCaption data={data} />
+        </>
+      )}
+
+      {!hasFills && !s && (
+        <Reveal delay={80}>
+          <EmptyNote>
+            Expected-vs-realized credit and slippage stats populate from the live
+            journal — see the dashboard for current figures. By design this
+            section shows no illustrative numbers: its entire claim is honest
+            measurement, so a shape-only stand-in would be self-defeating.
+          </EmptyNote>
+        </Reveal>
       )}
     </section>
   );
