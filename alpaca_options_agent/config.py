@@ -17,17 +17,12 @@ from typing import Dict, List
 from dotenv import load_dotenv
 
 from alpaca_options_agent.strategy.premium_selling import StrategyParams
+from alpaca_options_agent.strategy.types import STRATEGY_TYPE_SLUGS  # re-exported
 
 load_dotenv()
 
-# Slugs the SaaS dashboard / DB use for the three exposed strategy families,
-# mapped from the finer-grained StrategyType enum the engine emits.
-STRATEGY_TYPE_SLUGS = {
-    "cash_secured_put": "csp",
-    "covered_call": "covered_call",
-    "put_credit_spread": "credit_spread",
-    "call_credit_spread": "credit_spread",
-}
+# Dashboard/DB strategy-family slugs. STRATEGY_TYPE_SLUGS (StrategyType -> slug)
+# is defined in strategy/types.py and re-exported here for existing importers.
 ALL_STRATEGY_SLUGS = ["csp", "covered_call", "credit_spread"]
 
 

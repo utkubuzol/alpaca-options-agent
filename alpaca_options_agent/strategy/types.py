@@ -21,6 +21,17 @@ class StrategyType(str, Enum):
     CALL_CREDIT_SPREAD = "call_credit_spread"
 
 
+# The finer StrategyType enum -> the three dashboard/config slugs a user picks
+# from ("csp", "covered_call", "credit_spread"). Single source of truth, imported
+# by both config.py and the strategy engine.
+STRATEGY_TYPE_SLUGS = {
+    StrategyType.CASH_SECURED_PUT.value: "csp",
+    StrategyType.COVERED_CALL.value: "covered_call",
+    StrategyType.PUT_CREDIT_SPREAD.value: "credit_spread",
+    StrategyType.CALL_CREDIT_SPREAD.value: "credit_spread",
+}
+
+
 class LegAction(str, Enum):
     SELL_TO_OPEN = "sell_to_open"
     BUY_TO_OPEN = "buy_to_open"

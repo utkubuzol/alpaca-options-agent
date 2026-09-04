@@ -31,6 +31,7 @@ from typing import List, Optional
 
 from alpaca_options_agent.strategy.signals import TrendSignal, VolSignal
 from alpaca_options_agent.strategy.types import (
+    STRATEGY_TYPE_SLUGS,
     Leg,
     LegAction,
     OptionQuote,
@@ -231,9 +232,15 @@ def generate_candidates(
     min_open_interest: int,
     max_spread_pct: float,
     params: Optional[StrategyParams] = None,
+    allowed_slugs: Optional[set] = None,
 ) -> List[TradeCandidate]:
     """The strategy's decision function. Returns a ranked list (possibly
     empty) of trade candidates for this underlying, right now.
+
+    `allowed_slugs`: if given, only keep candidates whose family is in this set
+    ("csp" / "covered_call" / "credit_spread"). Applied *before* ranking and the
+    max-per-underlying cut, so restricting to e.g. credit spreads doesn't just
+    get a higher-ranked CSP dropped and leave nothing.
     """
     params = params or StrategyParams()
 
@@ -259,6 +266,12 @@ def generate_candidates(
         c = build_covered_call(chain, spot, params, min_open_interest, max_spread_pct, shares_held)
         if c:
             candidates.append(c)
+
+    if allowed_slugs is not None:
+        candidates = [
+            c for c in candidates
+            if STRATEGY_TYPE_SLUGS.get(c.strategy_type.value) in allowed_slugs
+        ]
 
     for c in candidates:
         liquidity_quality = 1.0 - min(
