@@ -17,7 +17,7 @@ from typing import Dict, List, Optional
 
 from alpaca_options_agent.broker.cli_bridge import AlpacaCli, AlpacaCliUnavailable
 from alpaca_options_agent.broker.client import AlpacaBroker
-from alpaca_options_agent.config import STRATEGY_TYPE_SLUGS, AgentConfig
+from alpaca_options_agent.config import AgentConfig
 from alpaca_options_agent.execution.cost_model import expected_marketable_limit
 from alpaca_options_agent.execution.execution_engine import ExecutionEngine
 from alpaca_options_agent.monitoring.journal import Journal, JournalSink
@@ -186,12 +186,8 @@ def run_cycle(
                 min_open_interest=cfg.risk.min_open_interest,
                 max_spread_pct=cfg.risk.max_bid_ask_spread_pct,
                 params=params,
+                allowed_slugs=set(cfg.enabled_strategy_types) or None,
             )
-            if cfg.enabled_strategy_types:
-                candidates = [
-                    c for c in candidates
-                    if STRATEGY_TYPE_SLUGS.get(c.strategy_type.value) in cfg.enabled_strategy_types
-                ]
 
             row["n_candidates"] = len(candidates)
             if not candidates:
