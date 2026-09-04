@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-STRATEGY_SLUGS = {"csp", "covered_call", "credit_spread"}
+STRATEGY_SLUGS = {"csp", "covered_call", "credit_spread", "iron_condor"}
 
 
 class BrokerCredentialsIn(BaseModel):

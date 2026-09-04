@@ -41,8 +41,8 @@ export function Proof({ data }: { data: LandingData }) {
   return (
     <section className="k-section" id="proof" aria-labelledby="proof-h">
       <Reveal>
-        <p className="k-eyebrow">04 / The proof</p>
-        <h2 className="k-h2" id="proof-h">The backtest and the paper book run the same code.</h2>
+        <p className="k-eyebrow">04 / Track record</p>
+        <h2 className="k-h2" id="proof-h">The backtest and the live book run the same code.</h2>
       </Reveal>
       <Reveal delay={80}>
         <p className="k-body">

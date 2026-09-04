@@ -6,7 +6,13 @@ import { apiGet, apiSend } from "@/lib/api";
 import { Card, Btn } from "@/components/ui";
 import { PageHeader } from "@/components/PageHeader";
 
-const TYPES = ["csp", "covered_call", "credit_spread"];
+const TYPES = ["csp", "covered_call", "credit_spread", "iron_condor"];
+const TYPE_LABELS: Record<string, string> = {
+  csp: "Cash-secured put",
+  covered_call: "Covered call",
+  credit_spread: "Credit spread (put / call)",
+  iron_condor: "Iron condor",
+};
 
 type Strategy = any;
 
@@ -139,7 +145,7 @@ export default function StrategiesPage() {
               />
             </Field>
             <Field label="Strategy types">
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap">
                 {TYPES.map((t) => (
                   <label key={t} className="text-xs flex items-center gap-1">
                     <input
@@ -154,7 +160,7 @@ export default function StrategiesPage() {
                         })
                       }
                     />
-                    {t}
+                    {TYPE_LABELS[t] ?? t}
                   </label>
                 ))}
               </div>

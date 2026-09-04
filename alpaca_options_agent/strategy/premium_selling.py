@@ -222,6 +222,63 @@ def _build_credit_spread(
     )
 
 
+def build_iron_condor(
+    chain: List[OptionQuote],
+    spot: float,
+    params: StrategyParams,
+    min_open_interest: int,
+    max_spread_pct: float,
+) -> Optional[TradeCandidate]:
+    """A short iron condor: a put credit spread below spot and a call credit
+    spread above it, same expiry, four legs. Collects premium from both sides
+    and profits when the underlying stays in the range — the natural
+    premium-selling structure for a genuinely rangebound (neutral) tape.
+    Risk is defined: only one wing can be breached at expiry, so max loss is
+    the wider wing's width minus the total credit.
+    """
+    put_side = _build_credit_spread(
+        chain, spot, params, min_open_interest, max_spread_pct, option_type="put", bullish=True
+    )
+    call_side = _build_credit_spread(
+        chain, spot, params, min_open_interest, max_spread_pct, option_type="call", bullish=False
+    )
+    if put_side is None or call_side is None:
+        return None
+    if put_side.legs[0].quote.expiration != call_side.legs[0].quote.expiration:
+        return None  # both wings must share an expiry to be one condor
+
+    legs = put_side.legs + call_side.legs  # 4: short put, long put, short call, long call
+    net_credit = put_side.net_credit_per_contract + call_side.net_credit_per_contract
+    put_w = abs(put_side.legs[0].quote.strike - put_side.legs[1].quote.strike)
+    call_w = abs(call_side.legs[0].quote.strike - call_side.legs[1].quote.strike)
+    max_loss = (max(put_w, call_w) - net_credit) * 100
+    if max_loss <= 0:
+        return None
+    sp = put_side.legs[0].quote.strike
+    sc = call_side.legs[0].quote.strike
+
+    return TradeCandidate(
+        underlying=put_side.underlying,
+        strategy_type=StrategyType.IRON_CONDOR,
+        legs=legs,
+        contracts=1,
+        rationale=(
+            f"Iron condor: put spread {put_side.legs[1].quote.strike:.2f}/{sp:.2f} + call spread "
+            f"{sc:.2f}/{call_side.legs[1].quote.strike:.2f} (exp {put_side.legs[0].quote.expiration}) "
+            f"for ${net_credit:.2f} total credit — sells premium on both sides of a rangebound tape "
+            f"with loss capped at the wider wing."
+        ),
+        net_credit_per_contract=net_credit,
+        max_loss_per_contract=max_loss,
+        max_profit_per_contract=net_credit * 100,
+        prob_of_profit=min(put_side.prob_of_profit, call_side.prob_of_profit),
+        breakeven=0.0,  # two breakevens (sp - credit, sc + credit); not a single number
+        collateral_required=max_loss,
+        net_delta=put_side.net_delta + call_side.net_delta,
+        net_theta=put_side.net_theta + call_side.net_theta,
+    )
+
+
 def generate_candidates(
     underlying: str,
     chain: List[OptionQuote],
@@ -253,12 +310,25 @@ def generate_candidates(
         c = build_cash_secured_put(chain, spot, params, min_open_interest, max_spread_pct)
         if c:
             candidates.append(c)
+        # defined-risk bullish premium play — fits accounts without cash-secured
+        # collateral to spare (put credit spread ≈ a few hundred $ of margin)
+        c = _build_credit_spread(
+            chain, spot, params, min_open_interest, max_spread_pct,
+            option_type="put", bullish=True,
+        )
+        if c:
+            candidates.append(c)
 
     if trend_sig.regime in ("bearish", "neutral"):
         c = _build_credit_spread(
             chain, spot, params, min_open_interest, max_spread_pct,
             option_type="call", bullish=False,
         )
+        if c:
+            candidates.append(c)
+
+    if trend_sig.regime == "neutral":
+        c = build_iron_condor(chain, spot, params, min_open_interest, max_spread_pct)
         if c:
             candidates.append(c)
 

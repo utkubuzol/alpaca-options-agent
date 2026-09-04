@@ -19,16 +19,18 @@ class StrategyType(str, Enum):
     COVERED_CALL = "covered_call"
     PUT_CREDIT_SPREAD = "put_credit_spread"
     CALL_CREDIT_SPREAD = "call_credit_spread"
+    IRON_CONDOR = "iron_condor"
 
 
-# The finer StrategyType enum -> the three dashboard/config slugs a user picks
-# from ("csp", "covered_call", "credit_spread"). Single source of truth, imported
-# by both config.py and the strategy engine.
+# The finer StrategyType enum -> the dashboard/config slugs a user picks from
+# ("csp", "covered_call", "credit_spread", "iron_condor"). Single source of
+# truth, imported by both config.py and the strategy engine.
 STRATEGY_TYPE_SLUGS = {
     StrategyType.CASH_SECURED_PUT.value: "csp",
     StrategyType.COVERED_CALL.value: "covered_call",
     StrategyType.PUT_CREDIT_SPREAD.value: "credit_spread",
     StrategyType.CALL_CREDIT_SPREAD.value: "credit_spread",
+    StrategyType.IRON_CONDOR.value: "iron_condor",
 }
 
 
