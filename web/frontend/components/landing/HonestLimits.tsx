@@ -1,5 +1,5 @@
 "use client";
-import { Reveal } from "./Reveal";
+import { Reveal } from "@/components/Reveal";
 
 const LIMITS = [
   "IV rank starts as a proxy. A true IV rank needs about a year of daily implied-volatility history per name and tenor; the agent bootstraps local history from day one and labels every signal until roughly twenty sessions have accumulated.",

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useHasMouse, usePrefersReducedMotion } from "./hooks";
+import { useHasMouse, usePrefersReducedMotion } from "@/components/hooks";
 
 // Anchor styled as a Kestrel button. Primary variant is magnetic: within a
 // 60px radius it eases up to 6px toward the cursor. Transform only, rAF-driven.

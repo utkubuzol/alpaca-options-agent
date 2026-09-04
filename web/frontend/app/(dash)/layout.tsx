@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase-browser";
+import { Reticle } from "@/components/Reticle";
 
 const NAV = [
   { href: "/dashboard", label: "Overview" },
@@ -15,10 +16,12 @@ const NAV = [
 export default function DashLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
+    rootRef.current?.classList.add("js"); // opt into scroll-reveal
     supabase.auth.getSession().then(({ data }) => {
       if (!data.session) {
         router.replace("/login");
@@ -33,26 +36,35 @@ export default function DashLayout({ children }: { children: React.ReactNode }) 
     return () => sub.subscription.unsubscribe();
   }, [router]);
 
-  if (!ready) return <div className="p-8 text-sm opacity-60">Loading…</div>;
+  if (!ready) return <div className="p-8 text-sm text-muted">Loading…</div>;
 
   return (
-    <div className="min-h-screen grid grid-cols-[200px_1fr]">
-      <aside className="border-r border-border p-4 flex flex-col gap-1">
-        <a href="/" className="font-semibold text-sm mb-4 block">⚡ Kestrel</a>
+    <div ref={rootRef} className="min-h-screen grid grid-cols-[212px_1fr] bg-bg text-fg">
+      <Reticle />
+      <aside className="border-r border-border bg-panel/40 p-4 flex flex-col gap-1">
+        <a
+          href="/"
+          className="flex items-center gap-2 text-sm font-semibold tracking-[0.22em] mb-5"
+        >
+          <span className="text-accent">◆</span> KESTREL
+        </a>
         {NAV.map((n) => (
           <Link
             key={n.href}
             href={n.href}
-            className={`text-sm rounded-lg px-3 py-2 ${
-              pathname === n.href ? "bg-panel text-accent" : "opacity-70 hover:opacity-100"
+            data-reticle
+            className={`text-sm rounded-lg px-3 py-2 transition-colors ${
+              pathname === n.href
+                ? "bg-panel text-accent"
+                : "text-muted hover:text-fg"
             }`}
           >
             {n.label}
           </Link>
         ))}
-        <div className="mt-auto text-xs opacity-50 pt-4 break-all">{email}</div>
+        <div className="mt-auto text-xs text-axis pt-4 break-all">{email}</div>
         <button
-          className="text-xs underline opacity-70 text-left"
+          className="text-xs text-muted hover:text-fg underline text-left"
           onClick={async () => {
             await supabase.auth.signOut();
             router.replace("/");

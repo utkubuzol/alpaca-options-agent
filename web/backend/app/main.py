@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.settings import get_settings
-from app.routers import account, broker, notifications, runs, strategies, trades
+from app.routers import account, broker, notifications, public, runs, strategies, trades
 
 logging.basicConfig(level=logging.INFO)
 
@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 for r in (account.router, broker.router, strategies.router, trades.router,
-          notifications.router, runs.router):
+          notifications.router, runs.router, public.router):
     app.include_router(r)
 
 

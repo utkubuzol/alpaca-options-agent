@@ -9,7 +9,7 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
-import { Reveal } from "./Reveal";
+import { Reveal } from "@/components/Reveal";
 import { Stat } from "@/components/ui";
 import { DataCaption, EmptyNote } from "./Caption";
 import type { LandingData } from "./types";

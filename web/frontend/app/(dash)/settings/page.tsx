@@ -4,13 +4,14 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { apiGet, apiSend } from "@/lib/api";
 import { Card, Btn } from "@/components/ui";
+import { PageHeader } from "@/components/PageHeader";
 
 const EVENT_KINDS = ["fill", "error", "risk_decision", "candidate", "scan"];
 
 export default function SettingsPage() {
   return (
     <div className="space-y-6 max-w-2xl">
-      <h1 className="text-xl font-semibold">Settings</h1>
+      <PageHeader title="Settings" />
       <BrokerSection />
       <NotificationSection />
     </div>

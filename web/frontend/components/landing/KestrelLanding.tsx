@@ -1,7 +1,9 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { KESTREL_CSS } from "./styles";
-import { Reticle } from "./Reticle";
+import { Reticle } from "@/components/Reticle";
+import { Ticker } from "@/components/Ticker";
+import { publicGet } from "@/lib/publicApi";
 import { Nav } from "./Nav";
 import { Hero } from "./Hero";
 import { TheWait } from "./TheWait";
@@ -16,15 +18,21 @@ export function KestrelLanding({
   data,
   fontClassName,
 }: {
-  data: LandingData;
+  data: LandingData; // build-time seed from data.json
   fontClassName: string;
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
-  // Mark the tree as JS-enabled only after hydration, so the reveal animations
-  // (which start hidden) never hide content when JavaScript is unavailable.
+  // Start from the build-time seed, then overlay the live journal aggregate
+  // from /api/public/showcase. Sections already flip illustrative -> live on
+  // their data key being non-null, so nothing else changes.
+  const [live, setLive] = useState<LandingData>(data);
+
   useEffect(() => {
     rootRef.current?.classList.add("js");
-  }, []);
+    publicGet<LandingData>("/api/public/showcase").then((r) => {
+      if (r && r.recordCount > 0) setLive({ ...data, ...r });
+    });
+  }, [data]);
 
   return (
     <div ref={rootRef} className={`kestrel ${fontClassName}`}>
@@ -33,10 +41,13 @@ export function KestrelLanding({
       <Nav />
       <main>
         <Hero />
-        <TheWait data={data} />
-        <TheStrike data={data} />
-        <Gates data={data} />
-        <Proof data={data} />
+        <div className="k-section" style={{ paddingTop: 0, paddingBottom: 0 }}>
+          <Ticker />
+        </div>
+        <TheWait data={live} />
+        <TheStrike data={live} />
+        <Gates data={live} />
+        <Proof data={live} />
         <HonestLimits />
       </main>
       <Footer />

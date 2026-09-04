@@ -9,7 +9,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
-import { Reveal } from "./Reveal";
+import { Reveal } from "@/components/Reveal";
 import { DataCaption, IllustrativeCaption } from "./Caption";
 import type { LandingData } from "./types";
 

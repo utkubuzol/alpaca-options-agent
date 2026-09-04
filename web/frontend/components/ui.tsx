@@ -5,16 +5,25 @@ export function Card({
   title,
   children,
   right,
+  reticle = true,
 }: {
   title?: string;
   children: React.ReactNode;
   right?: React.ReactNode;
+  reticle?: boolean;
 }) {
   return (
-    <div className="card p-4">
+    <div
+      className="bg-panel border border-border rounded-2xl p-4"
+      {...(reticle ? { "data-reticle": "" } : {})}
+    >
       {(title || right) && (
         <div className="flex items-center justify-between mb-3">
-          {title && <h2 className="text-sm font-semibold opacity-80">{title}</h2>}
+          {title && (
+            <h2 className="text-[11px] font-medium uppercase tracking-[0.14em] text-axis">
+              {title}
+            </h2>
+          )}
           {right}
         </div>
       )}
@@ -34,13 +43,14 @@ export function Stat({
   sub?: string;
   tone?: "pos" | "neg" | "neutral";
 }) {
-  const color =
-    tone === "pos" ? "text-emerald-400" : tone === "neg" ? "text-rose-400" : "";
+  const color = tone === "pos" ? "text-pos" : tone === "neg" ? "text-neg" : "text-fg";
   return (
-    <div className="card p-4">
-      <div className="text-xs opacity-60">{label}</div>
-      <div className={`text-2xl font-semibold mt-1 ${color}`}>{value}</div>
-      {sub && <div className="text-xs opacity-50 mt-1">{sub}</div>}
+    <div className="bg-panel border border-border rounded-xl p-4" data-reticle>
+      <div className="text-[11px] uppercase tracking-[0.14em] text-axis">{label}</div>
+      <div className={`text-2xl font-medium mt-2 tabular-nums tracking-tight ${color}`}>
+        {value}
+      </div>
+      {sub && <div className="text-xs text-muted mt-1">{sub}</div>}
     </div>
   );
 }
@@ -70,16 +80,16 @@ export function Btn({
 }) {
   const cls =
     variant === "primary"
-      ? "bg-accent text-black"
+      ? "bg-accent text-[#05171a] border border-accent hover:bg-[#4fe4ee]"
       : variant === "danger"
-        ? "bg-rose-500/20 text-rose-300 border border-rose-500/40"
-        : "border border-border";
+        ? "bg-neg/15 text-neg border border-neg/40"
+        : "border border-border text-fg hover:border-accentDim hover:text-accent";
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`text-xs font-medium rounded-lg px-3 py-1.5 disabled:opacity-40 ${cls}`}
+      className={`text-xs font-medium rounded-lg px-3 py-1.5 transition-colors disabled:opacity-40 ${cls}`}
     >
       {children}
     </button>
