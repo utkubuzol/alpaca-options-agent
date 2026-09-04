@@ -1,7 +1,7 @@
 "use client";
 
 export const dynamic = "force-dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase-browser";
 
@@ -12,6 +12,16 @@ export default function LoginPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  // Already signed in? Skip the form, go straight to the dashboard. Lets the
+  // landing page's "Open dashboard" CTA point here unconditionally.
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) router.replace("/dashboard");
+      else setChecked(true);
+    });
+  }, [router]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,10 +45,13 @@ export default function LoginPage() {
     }
   }
 
+  if (!checked) return <div className="p-8 text-sm opacity-60">Loading…</div>;
+
   return (
     <div className="min-h-screen grid place-items-center p-6">
       <form onSubmit={submit} className="card p-6 w-full max-w-sm space-y-4">
-        <h1 className="text-lg font-semibold">Alpaca Options SaaS</h1>
+        <a href="/" className="text-xs opacity-60 hover:opacity-100">← Kestrel</a>
+        <h1 className="text-lg font-semibold">Kestrel</h1>
         <p className="text-xs opacity-60">
           {mode === "signin" ? "Sign in to your dashboard" : "Create an account"}
         </p>

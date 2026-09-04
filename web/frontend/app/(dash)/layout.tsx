@@ -38,7 +38,7 @@ export default function DashLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className="min-h-screen grid grid-cols-[200px_1fr]">
       <aside className="border-r border-border p-4 flex flex-col gap-1">
-        <div className="font-semibold text-sm mb-4">⚡ Options SaaS</div>
+        <a href="/" className="font-semibold text-sm mb-4 block">⚡ Kestrel</a>
         {NAV.map((n) => (
           <Link
             key={n.href}
@@ -55,7 +55,7 @@ export default function DashLayout({ children }: { children: React.ReactNode }) 
           className="text-xs underline opacity-70 text-left"
           onClick={async () => {
             await supabase.auth.signOut();
-            router.replace("/login");
+            router.replace("/");
           }}
         >
           Sign out
