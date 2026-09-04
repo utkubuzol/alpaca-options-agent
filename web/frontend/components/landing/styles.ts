@@ -5,6 +5,9 @@
 
 export const GITHUB_URL = "https://github.com/utkubuzol/alpaca-options-agent";
 export const DEMO_URL = GITHUB_URL;
+export const CONTACT_EMAIL = "hello@kestrel.trading";
+export const CONTACT_URL = `mailto:${CONTACT_EMAIL}?subject=Kestrel%20access`;
+export const MEMBERSHIP_URL = "/login"; // membership == an account for now
 
 export const KESTREL_CSS = `
 .kestrel {

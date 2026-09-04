@@ -117,7 +117,7 @@ def test_strategy_create_validates_and_persists(client):
 def test_strategy_create_rejects_bad_type(client):
     fs = FakeSupa()
     _wire(fs)
-    r = client.post("/api/strategies", json={"name": "x", "strategy_types": ["iron_condor"]})
+    r = client.post("/api/strategies", json={"name": "x", "strategy_types": ["butterfly"]})
     assert r.status_code == 422
     app.dependency_overrides.pop(get_supa, None)
     app.dependency_overrides.pop(get_broker, None)

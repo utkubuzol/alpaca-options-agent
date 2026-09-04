@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
 import { Cta } from "./Cta";
-import { GITHUB_URL } from "./styles";
+import { CONTACT_URL } from "./styles";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -21,10 +21,11 @@ export function Nav() {
       </a>
       <nav className="k-navlinks" aria-label="Primary">
         <a className="k-navlink" href="#how-it-works">How it works</a>
-        <a className="k-navlink" href="#proof">Proof</a>
-        <a className="k-navlink" href={GITHUB_URL} target="_blank" rel="noreferrer noopener">GitHub</a>
+        <a className="k-navlink" href="#proof">Track record</a>
+        <a className="k-navlink" href="#membership">Membership</a>
+        <a className="k-navlink" href={CONTACT_URL}>Contact</a>
         <a className="k-navlink" href="/login">Sign in</a>
-        <Cta href="/login" variant="primary" size="sm" magnetic={false}>Open dashboard</Cta>
+        <Cta href="/login" variant="primary" size="sm" magnetic={false}>Get access</Cta>
       </nav>
     </header>
   );

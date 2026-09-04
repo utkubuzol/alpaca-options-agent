@@ -74,3 +74,52 @@ def test_liquidity_filter_excludes_wide_spreads():
                                 min_open_interest=50, max_spread_pct=0.20)
     if out and out[0].strategy_type.value == "cash_secured_put":
         assert out[0].legs[0].quote.strike != 90
+
+
+def _rich_neutral():
+    vsig = VolSignal(underlying="T", atm_iv=0.40, realized_vol_20d=0.25, iv_hv_ratio=1.6,
+                     iv_rank=0.85, iv_rank_is_proxy=True, iv_rank_sample_size=5)
+    tsig = TrendSignal(underlying="T", spot=100, sma_20=100, sma_50=100, momentum_20d=0.0,
+                       regime="neutral")
+    return vsig, tsig
+
+
+def test_put_credit_spread_in_bullish_regime():
+    chain = _make_chain()
+    vsig = VolSignal(underlying="T", atm_iv=0.40, realized_vol_20d=0.25, iv_hv_ratio=1.6,
+                     iv_rank=0.85, iv_rank_is_proxy=True, iv_rank_sample_size=5)
+    tsig = TrendSignal(underlying="T", spot=100, sma_20=98, sma_50=95, momentum_20d=0.03,
+                       regime="bullish")
+    out = generate_candidates("T", chain, vsig, tsig, spot=100.0, shares_held=0,
+                              min_open_interest=50, max_spread_pct=0.5,
+                              allowed_slugs={"credit_spread"})
+    assert len(out) == 1
+    assert out[0].strategy_type.value == "put_credit_spread"
+    assert len(out[0].legs) == 2
+    assert out[0].max_loss_per_contract > 0
+
+
+def test_iron_condor_in_neutral_regime():
+    chain = _make_chain()
+    vsig, tsig = _rich_neutral()
+    out = generate_candidates("T", chain, vsig, tsig, spot=100.0, shares_held=0,
+                              min_open_interest=50, max_spread_pct=0.5,
+                              allowed_slugs={"iron_condor"})
+    assert len(out) == 1
+    ic = out[0]
+    assert ic.strategy_type.value == "iron_condor"
+    assert len(ic.legs) == 4
+    assert ic.net_credit_per_contract > 0
+    assert ic.max_loss_per_contract > 0
+    assert ic.collateral_required == ic.max_loss_per_contract
+
+
+def test_allowed_slugs_filters_before_ranking():
+    # In neutral both a CSP and defined-risk spreads generate; restricting to
+    # credit_spread must still yield a spread (not an empty list).
+    chain = _make_chain()
+    vsig, tsig = _rich_neutral()
+    out = generate_candidates("T", chain, vsig, tsig, spot=100.0, shares_held=0,
+                              min_open_interest=50, max_spread_pct=0.5,
+                              allowed_slugs={"credit_spread"})
+    assert out and out[0].strategy_type.value.endswith("credit_spread")

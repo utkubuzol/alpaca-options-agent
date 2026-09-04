@@ -2,7 +2,6 @@
 import { useEffect, useRef } from "react";
 import { HeroMedia } from "./HeroMedia";
 import { Cta } from "./Cta";
-import { GITHUB_URL } from "./styles";
 import { useHasMouse, usePrefersReducedMotion } from "@/components/hooks";
 
 export function Hero() {
@@ -83,16 +82,19 @@ export function Hero() {
       <div ref={lightRef} className="k-hero__light" />
       <div className="k-hero__inner">
         <div ref={copyRef} className="k-hero__copy">
+          <p className="k-eyebrow">Autonomous options income</p>
           <h1 className="k-h1">
             Waits.<br />Then commits.
           </h1>
           <p className="k-hero__sub">
-            An autonomous options agent that sells premium only when volatility
-            pays for it — and measures whether the fill was ever real.
+            Kestrel is a fully automated options-income service. It sells
+            defined-risk premium only when implied volatility is priced rich, and
+            records expected-versus-realized fill on every trade — so the track
+            record is measured, not marketed.
           </p>
           <div className="k-hero__ctas">
-            <Cta href="/login" variant="primary" dataReticle>Open dashboard</Cta>
-            <Cta href={GITHUB_URL} variant="ghost" external>Read the ledger</Cta>
+            <Cta href="/login" variant="primary" dataReticle>Get access</Cta>
+            <Cta href="#proof" variant="ghost">See the track record</Cta>
           </div>
         </div>
       </div>

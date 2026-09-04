@@ -23,7 +23,7 @@ load_dotenv()
 
 # Dashboard/DB strategy-family slugs. STRATEGY_TYPE_SLUGS (StrategyType -> slug)
 # is defined in strategy/types.py and re-exported here for existing importers.
-ALL_STRATEGY_SLUGS = ["csp", "covered_call", "credit_spread"]
+ALL_STRATEGY_SLUGS = ["csp", "covered_call", "credit_spread", "iron_condor"]
 
 
 def _env_float(name: str, default: float) -> float:

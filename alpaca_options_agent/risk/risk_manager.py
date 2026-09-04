@@ -29,7 +29,11 @@ from alpaca_options_agent.strategy.types import StrategyType, TradeCandidate
 # limits instead (both already enforced below). Gating a CSP's size on the
 # to-zero loss would make max_risk_per_trade_pct bind long before buying
 # power does, which isn't the risk model being asked for.
-_DEFINED_RISK_STRATEGIES = {StrategyType.PUT_CREDIT_SPREAD, StrategyType.CALL_CREDIT_SPREAD}
+_DEFINED_RISK_STRATEGIES = {
+    StrategyType.PUT_CREDIT_SPREAD,
+    StrategyType.CALL_CREDIT_SPREAD,
+    StrategyType.IRON_CONDOR,
+}
 
 
 @dataclass
