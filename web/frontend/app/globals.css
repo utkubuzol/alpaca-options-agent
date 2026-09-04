@@ -4,9 +4,12 @@
 
 html,
 body {
-  background: #0b0e14;
-  color: #e6e9ef;
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #07090d;
+  color: #e8eff6;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 * {
@@ -14,20 +17,91 @@ body {
 }
 
 .card {
-  background: #141922;
-  border: 1px solid #232a36;
-  border-radius: 12px;
+  background: #10151c;
+  border: 1px solid #1c232d;
+  border-radius: 14px;
 }
 
 input,
 select {
-  background: #0b0e14;
-  border: 1px solid #232a36;
+  background: #07090d;
+  border: 1px solid #1c232d;
   border-radius: 8px;
   padding: 8px 10px;
   color: inherit;
 }
 
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #26d9e4;
+  outline-offset: 2px;
+}
+
 button {
   cursor: pointer;
+}
+
+/* ------------------------------------------------------------------ */
+/* Shared motion — used by both the landing and the dashboard.        */
+/* Promoted here out of components/landing/styles.ts so components/    */
+/* Reticle + Reveal work anywhere. Scoped class names kept (k-*).      */
+/* ------------------------------------------------------------------ */
+
+/* corner-bracket cursor */
+.k-reticle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  pointer-events: none;
+  will-change: transform, width, height;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 4px rgba(38, 217, 228, 0.55));
+}
+.k-reticle__c {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border: 0 solid #26d9e4;
+}
+.k-reticle__c--tl { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+.k-reticle__c--tr { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+.k-reticle__c--bl { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.k-reticle__c--br { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+
+/* scroll reveal — hidden only once the tree is marked .js (progressive) */
+.k-reveal { opacity: 1; }
+.js .k-reveal { opacity: 0; transform: translateY(16px); }
+.js .k-reveal.k-reveal--in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* soft cyan light that follows the cursor behind a header/section */
+.cursor-light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  background: radial-gradient(
+    240px 240px at var(--mx, 50%) var(--my, 50%),
+    rgba(38, 217, 228, 0.1),
+    rgba(38, 217, 228, 0) 70%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .k-reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .k-reticle,
+  .cursor-light {
+    display: none !important;
+  }
 }

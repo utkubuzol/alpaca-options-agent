@@ -12,7 +12,7 @@ ENV_FILE="web/backend/.env"
 command -v fly >/dev/null || { echo "install flyctl: https://fly.io/docs/flyctl/install/"; exit 1; }
 
 # Only these keys go to Fly (skip blanks, skip comments).
-KEYS="SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY SUPABASE_JWT_SECRET APP_SECRET_KEY TELEGRAM_BOT_TOKEN FRONTEND_ORIGINS"
+KEYS="SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY SUPABASE_JWT_SECRET APP_SECRET_KEY TELEGRAM_BOT_TOKEN FRONTEND_ORIGINS SHOWCASE_USER_ID"
 
 args=()
 while IFS= read -r line; do

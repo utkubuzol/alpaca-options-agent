@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Reveal } from "./Reveal";
+import { Reveal } from "@/components/Reveal";
 import { DataCaption, EmptyNote } from "./Caption";
-import { useHasMouse, usePrefersReducedMotion } from "./hooks";
+import { useHasMouse, usePrefersReducedMotion } from "@/components/hooks";
 import type { LandingData } from "./types";
 
 const GATES = [

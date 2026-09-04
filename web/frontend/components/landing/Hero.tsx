@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { HeroMedia } from "./HeroMedia";
 import { Cta } from "./Cta";
 import { GITHUB_URL } from "./styles";
-import { useHasMouse, usePrefersReducedMotion } from "./hooks";
+import { useHasMouse, usePrefersReducedMotion } from "@/components/hooks";
 
 export function Hero() {
   const hasMouse = useHasMouse();
@@ -77,7 +77,7 @@ export function Hero() {
   return (
     <section className="k-hero" id="top" ref={heroRef as any} aria-label="Kestrel">
       <div ref={mediaRef} className="k-hero__media-wrap" style={{ position: "absolute", inset: 0, zIndex: 0 }}>
-        <HeroMedia src="/hero-hourglass.png" />
+        <HeroMedia src="/hero-hourglass.jpg" />
       </div>
       <div className="k-hero__vignette" />
       <div ref={lightRef} className="k-hero__light" />

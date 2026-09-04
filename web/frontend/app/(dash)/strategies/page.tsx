@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import { apiGet, apiSend } from "@/lib/api";
 import { Card, Btn } from "@/components/ui";
+import { PageHeader } from "@/components/PageHeader";
 
 const TYPES = ["csp", "covered_call", "credit_spread"];
 
@@ -60,10 +61,10 @@ export default function StrategiesPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Strategies</h1>
-        <Btn onClick={() => setEditing({ ...EMPTY })}>+ New strategy</Btn>
-      </div>
+      <PageHeader
+        title="Strategies"
+        right={<Btn onClick={() => setEditing({ ...EMPTY })}>+ New strategy</Btn>}
+      />
       {msg && <div className="text-xs text-amber-400">{msg}</div>}
 
       <div className="grid gap-3">

@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     # CORS — the deployed frontend origin(s), comma-separated.
     frontend_origins: str = "http://localhost:3000"
 
+    # The account whose journal + broker feed the public landing page
+    # (/api/public/showcase, /api/public/quotes). No auth required to read it.
+    showcase_user_id: str = ""
+
     # Where the JSONL fallback journal / iv_history go when not using the DB sink.
     agent_log_root: str = "./logs"
 

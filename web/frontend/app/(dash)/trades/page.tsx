@@ -4,6 +4,8 @@ export const dynamic = "force-dynamic";
 import { useEffect, useRef, useState } from "react";
 import { apiGet, openTradeStream } from "@/lib/api";
 import { Card, Btn } from "@/components/ui";
+import { Reveal } from "@/components/Reveal";
+import { PageHeader } from "@/components/PageHeader";
 
 const KINDS = ["", "fill", "risk_decision", "candidate", "scan", "error", "note"];
 
@@ -15,7 +17,7 @@ function KindBadge({ kind }: { kind: string }) {
     candidate: "bg-sky-500/20 text-sky-300",
   };
   return (
-    <span className={`text-[10px] rounded px-1.5 py-0.5 ${map[kind] || "bg-panel opacity-70"}`}>
+    <span className={`text-[10px] rounded px-1.5 py-0.5 ${map[kind] || "bg-panel text-muted"}`}>
       {kind}
     </span>
   );
@@ -56,8 +58,8 @@ export default function TradesPage() {
 
   return (
     <div className="space-y-4">
+      <PageHeader title="Trades" />
       <div className="flex items-center gap-3 flex-wrap">
-        <h1 className="text-xl font-semibold">Trades</h1>
         <select value={kind} onChange={(e) => setKind(e.target.value)}>
           {KINDS.map((k) => (
             <option key={k} value={k}>
@@ -76,7 +78,7 @@ export default function TradesPage() {
         </Btn>
       </div>
 
-      <Card>
+      <Reveal><Card>
         <div className="divide-y divide-border">
           {events.map((e) => (
             <div key={e.id} className="py-2">
@@ -84,12 +86,12 @@ export default function TradesPage() {
                 className="w-full flex items-center gap-3 text-left"
                 onClick={() => setExpanded(expanded === e.id ? null : e.id)}
               >
-                <span className="text-[11px] opacity-40 w-32 shrink-0">
+                <span className="text-[11px] text-axis w-32 shrink-0">
                   {new Date(e.ts).toLocaleString()}
                 </span>
                 <KindBadge kind={e.kind} />
-                <span className="text-xs font-mono opacity-80">{e.underlying || "—"}</span>
-                <span className="text-xs opacity-50 truncate">
+                <span className="text-xs font-mono text-muted">{e.underlying || "—"}</span>
+                <span className="text-xs text-axis truncate">
                   {summarize(e)}
                 </span>
               </button>
@@ -101,10 +103,10 @@ export default function TradesPage() {
             </div>
           ))}
           {events.length === 0 && (
-            <div className="py-4 text-xs opacity-50">No events yet. Run a strategy scan.</div>
+            <div className="py-4 text-xs text-muted">No events yet. Run a strategy scan.</div>
           )}
         </div>
-      </Card>
+      </Card></Reveal>
     </div>
   );
 }

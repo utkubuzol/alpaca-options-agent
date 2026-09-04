@@ -1,6 +1,7 @@
-// Kestrel landing — all colour + layout tokens are scoped under `.kestrel`.
-// Nothing here touches the dashboard: no `:root` vars, no globals.css, no
-// tailwind.config changes. The dashboard keeps its own palette entirely.
+// Kestrel landing — page *layout* CSS, scoped under `.kestrel`. Colour tokens
+// are shared with the dashboard via tailwind.config.ts; the reusable motion
+// rules (reticle, scroll-reveal, cursor-light) now live in app/globals.css so
+// components/Reticle + components/Reveal work on every page.
 
 export const GITHUB_URL = "https://github.com/utkubuzol/alpaca-options-agent";
 export const DEMO_URL = GITHUB_URL;
@@ -350,27 +351,9 @@ export const KESTREL_CSS = `
 .k-footer__links a { color: var(--k-muted); font-size: 13px; }
 .k-footer__links a:hover { color: var(--k-accent); }
 
-/* ---------- reticle ---------- */
-.k-reticle {
-  position: fixed; top: 0; left: 0; z-index: 60;
-  pointer-events: none;
-  will-change: transform, width, height;
-  filter: drop-shadow(0 0 1px rgba(0,0,0,0.7)) drop-shadow(0 0 4px rgba(38,217,228,0.55));
-}
-.k-reticle__c { position: absolute; width: 13px; height: 13px; border: 0 solid var(--k-accent); }
-.k-reticle__c--tl { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
-.k-reticle__c--tr { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
-.k-reticle__c--bl { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
-.k-reticle__c--br { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
-
-/* ---------- reveal ---------- */
-.k-reveal { opacity: 1; }
-.js .k-reveal { opacity: 0; transform: translateY(16px); }
-.js .k-reveal.k-reveal--in { opacity: 1; transform: translateY(0); transition: opacity .5s ease-out, transform .5s ease-out; }
+/* reticle + scroll-reveal + cursor-light live in app/globals.css (shared) */
 
 @media (prefers-reduced-motion: reduce) {
-  .js .k-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .k-reticle { display: none !important; }
   .k-hero__light { display: none !important; }
 }
 `;
