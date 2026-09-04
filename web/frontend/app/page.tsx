@@ -1,16 +1,22 @@
-"use client";
+import { Inter } from "next/font/google";
+import { KestrelLanding } from "@/components/landing/KestrelLanding";
+import type { LandingData } from "@/components/landing/types";
+import data from "@/components/landing/data.json";
 
-export const dynamic = "force-dynamic";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase-browser";
+// Inter is loaded here (inside the landing route only) so it never touches the
+// dashboard's root layout / typography.
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
 
-export default function Home() {
-  const router = useRouter();
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      router.replace(data.session ? "/dashboard" : "/login");
-    });
-  }, [router]);
-  return <div className="p-8 text-sm opacity-60">Loading…</div>;
+// Every figure the page shows comes from this generated JSON, produced by
+// `scripts/build_landing_data.py` from the agent's append-only journal. It is
+// imported at build time (no runtime data fetching), so `/` stays statically
+// prerendered. When a key is null, the matching section degrades honestly —
+// see the landing components. Regenerate with:
+//   python scripts/build_landing_data.py <path/to/agent_journal.jsonl>
+export default function Page() {
+  return <KestrelLanding data={data as LandingData} fontClassName={inter.className} />;
 }
